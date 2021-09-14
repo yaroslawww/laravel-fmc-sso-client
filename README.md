@@ -1,6 +1,6 @@
 # FMC SSO client for laravel framework.
 
-![](./assets/img/fmc_logo.jpg)
+[![](./assets/img/fmc_logo.jpg)](https://fmc.co.uk/)
 
 If your application uses multiple oAuth providers, it's easier to use a service-independent package
 like [laravel/socialite](https://github.com/laravel/socialite)
