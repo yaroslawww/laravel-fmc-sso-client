@@ -10,6 +10,7 @@ use FMCSSOClient\Exceptions\InvalidUserResponseException;
 use FMCSSOClient\OAuth\RoutesManager;
 use FMCSSOClient\OAuth\StateManager;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
@@ -268,26 +269,26 @@ class SSOClient
         $response = $this->getHttpClient()
                          ->post($this->routesManager->getTokenUrl(), $this->getTokenFields($code));
 
-        if (!$response->successful()) {
-            throw new InvalidTokenResponseException('Token response not valid.');
-        }
+        return $this->getTokenFromResponse($response);
+    }
 
-        try {
-            $token = new Token(
-                $response->json('token_type'),
-                $response->json('expires_in'),
-                $response->json('access_token'),
-                $response->json('refresh_token'),
-            );
-        } catch (\TypeError $e) {
-            throw new InvalidTokenResponseException(message: 'Token response has not valid params', previous: $e);
+    /**
+     * Refresh token.
+     *
+     * @param Token $token
+     *
+     * @return Token|null
+     * @throws InvalidTokenResponseException
+     */
+    public function refreshToken(Token $token): ?Token
+    {
+        if (!$token->valid() || !$token->getRefreshToken()) {
+            return null;
         }
+        $response = $this->getHttpClient()
+                         ->post($this->routesManager->getTokenUrl(), $this->getRefreshTokenFields($token->getRefreshToken()));
 
-        if (!$token->valid()) {
-            throw new InvalidTokenResponseException('Token not valid or expired');
-        }
-
-        return $token;
+        return $this->getTokenFromResponse($response);
     }
 
     /**
@@ -320,6 +321,24 @@ class SSOClient
             'client_secret' => $this->clientSecret,
             'code'          => $code,
             'redirect_uri'  => $this->redirectUrl,
+        ];
+    }
+
+    /**
+     * Get the POST fields for the refresh token request.
+     *
+     * @param string $refreshToken
+     *
+     * @return array
+     */
+    protected function getRefreshTokenFields(string $refreshToken): array
+    {
+        return [
+            'grant_type'    => 'refresh_token',
+            'client_id'     => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'scope'         => $this->routesManager->prepareScopes($this->getScopes()),
+            'refresh_token' => $refreshToken,
         ];
     }
 
@@ -363,5 +382,35 @@ class SSOClient
             'last_name'  => Arr::get($user, 'last_name'),
             'email'      => Arr::get($user, 'email'),
         ]);
+    }
+
+    /**
+     * @param Response $response
+     *
+     * @return Token|null
+     * @throws InvalidTokenResponseException
+     */
+    protected function getTokenFromResponse(Response $response): ?Token
+    {
+        if (!$response->successful()) {
+            throw new InvalidTokenResponseException($response->json('message', $response->json('hint', 'Token response not valid.')));
+        }
+
+        try {
+            $token = new Token(
+                $response->json('token_type'),
+                $response->json('expires_in'),
+                $response->json('access_token'),
+                $response->json('refresh_token'),
+            );
+        } catch (\TypeError $e) {
+            throw new InvalidTokenResponseException(message: 'Token response has not valid params', previous: $e);
+        }
+
+        if (!$token->valid()) {
+            throw new InvalidTokenResponseException('Token not valid or expired');
+        }
+
+        return $token;
     }
 }

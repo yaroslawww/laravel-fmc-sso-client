@@ -164,4 +164,26 @@ class OAuthStep2Test extends TestCase
         $this->assertEquals($token2->getRefreshToken(), $token->getRefreshToken());
         $this->assertEquals($token2->getAuthorizationHeader(), $token->getAuthorizationHeader());
     }
+
+
+
+    /** @test */
+    public function error_on_invalid_response()
+    {
+        $this->app['request']->merge([
+            'code' => 'my_code',
+        ]);
+
+        Http::fakeSequence()
+            ->push([
+                'token_type'    => 'SomeType',
+                'expires_in'    => -10,
+                'access_token'  => 'example_access_token',
+                'refresh_token' => 'example_refresh_token',
+            ]);
+
+        $this->expectException(InvalidTokenResponseException::class);
+        $this->expectExceptionMessage('Token not valid or expired');
+        SSOClient::ssoUser();
+    }
 }
