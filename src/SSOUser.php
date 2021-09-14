@@ -11,49 +11,49 @@ class SSOUser
      *
      * @var Token
      */
-    public Token $token;
+    protected Token $token;
 
     /**
      * The unique identifier for the user.
      *
-     * @var mixed
+     * @var int|string
      */
-    public $id;
+    protected int|string $id;
 
     /**
      * The user's e-mail address.
      *
      * @var string
      */
-    public string $email;
+    protected string $email;
 
     /**
      * The user's title.
      *
      * @var string
      */
-    public string $title;
+    protected string $title;
 
     /**
      * The user's first name.
      *
      * @var string
      */
-    public string $first_name;
+    protected string $first_name;
 
     /**
      * The user's last name.
      *
      * @var string
      */
-    public string $last_name;
+    protected string $last_name;
 
     /**
      * The user's raw attributes.
      *
      * @var array
      */
-    public array $user;
+    protected array $user;
 
     /**
      * Set the token on the user.
@@ -67,6 +67,16 @@ class SSOUser
         $this->token = $token;
 
         return $this;
+    }
+
+    /**
+     * Access token instance.
+     *
+     * @return Token
+     */
+    public function token(): Token
+    {
+        return $this->token;
     }
 
     /**

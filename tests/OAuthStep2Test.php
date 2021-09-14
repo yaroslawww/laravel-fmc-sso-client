@@ -134,7 +134,7 @@ class OAuthStep2Test extends TestCase
         $this->assertFalse($ssoUser->offsetExists('example_other_key'));
         $this->assertNull($ssoUser->offsetGet('example_other_key'));
 
-        $token = $ssoUser->token;
+        $token = $ssoUser->token();
 
         $this->assertInstanceOf(Token::class, $token);
 
