@@ -2,6 +2,7 @@
 
 namespace FMCSSOClient\Tests;
 
+use FMCSSOClient\Exceptions\CodeErrorException;
 use FMCSSOClient\SSOUser;
 use FMCSSOClient\Tests\Fixtures\CustomSSORouter;
 use FMCSSOClient\Tests\Fixtures\CustomSSORouterWithoutScope;
@@ -82,5 +83,19 @@ class SSORouterTest extends TestCase
         $user   = $router->callbackAction();
 
         $this->assertInstanceOf(SSOUser::class, $user);
+    }
+
+    /** @test */
+    public function router_can_handle_code_error_callback()
+    {
+        $this->app['request']->merge([
+            'error' => 'access_denied',
+        ]);
+
+        $this->expectException(CodeErrorException::class);
+        $this->expectExceptionMessage('access_denied');
+
+        $router = new CustomSSORouterWithoutScope();
+        $router->callbackAction();
     }
 }

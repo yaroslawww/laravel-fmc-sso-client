@@ -2,6 +2,7 @@
 
 namespace FMCSSOClient\Http\Controllers;
 
+use FMCSSOClient\Exceptions\CodeErrorException;
 use FMCSSOClient\Facades\SSOClient;
 use FMCSSOClient\SSOUser;
 use Illuminate\Http\RedirectResponse;
@@ -48,7 +49,11 @@ abstract class SSORouter
      */
     public function callbackAction(): mixed
     {
-        return $this->successUserCallback(SSOClient::ssoUser()) ?? Redirect::back();
+        try {
+            return $this->successUserCallback(SSOClient::ssoUser()) ?? Redirect::back();
+        } catch (CodeErrorException $e) {
+            return $this->errorCodeCallback($e) ?? Redirect::back();
+        }
     }
 
     /**
@@ -59,6 +64,18 @@ abstract class SSORouter
     public function scopes(): array
     {
         return [];
+    }
+
+    /**
+     * Callback to hand error response from code receiving.
+     *
+     * @param CodeErrorException $e
+     *
+     * @return mixed
+     */
+    protected function errorCodeCallback(CodeErrorException $e): mixed
+    {
+        throw $e;
     }
 
     /**

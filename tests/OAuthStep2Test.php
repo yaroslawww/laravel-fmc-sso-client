@@ -3,6 +3,7 @@
 namespace FMCSSOClient\Tests;
 
 use Carbon\Carbon;
+use FMCSSOClient\Exceptions\CodeErrorException;
 use FMCSSOClient\Exceptions\InvalidResponseUrlException;
 use FMCSSOClient\Exceptions\InvalidTokenResponseException;
 use FMCSSOClient\Exceptions\InvalidUserResponseException;
@@ -18,6 +19,18 @@ class OAuthStep2Test extends TestCase
     public function code_should_be_present_in_request()
     {
         $this->expectException(InvalidResponseUrlException::class);
+        SSOClient::ssoUser();
+    }
+
+    /** @test */
+    public function exception_on_code_error()
+    {
+        $this->app['request']->merge([
+            'error' => 'access_denied',
+        ]);
+
+        $this->expectException(CodeErrorException::class);
+        $this->expectExceptionMessage('access_denied');
         SSOClient::ssoUser();
     }
 

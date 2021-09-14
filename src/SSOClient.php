@@ -2,6 +2,7 @@
 
 namespace FMCSSOClient;
 
+use FMCSSOClient\Exceptions\CodeErrorException;
 use FMCSSOClient\Exceptions\InvalidResponseUrlException;
 use FMCSSOClient\Exceptions\InvalidStateException;
 use FMCSSOClient\Exceptions\InvalidTokenResponseException;
@@ -199,6 +200,10 @@ class SSOClient
             throw new InvalidStateException('FMC SSO response contain not valid "state".');
         }
 
+        if (!is_null($errorType = $this->getCodeError())) {
+            throw new CodeErrorException($errorType);
+        }
+
         $token = $this->getAccessTokenResponse($this->getCode());
 
         $this->ssoUser = $this->mapUserToObject($this->getUserByToken($token));
@@ -219,6 +224,20 @@ class SSOClient
         }
 
         return $code;
+    }
+
+    /**
+     * Get the error from the request.
+     *
+     * @return string|null
+     */
+    protected function getCodeError(): ?string
+    {
+        if (request()->has('error')) {
+            return (string) request()->input('error', '');
+        }
+
+        return null;
     }
 
     /**
