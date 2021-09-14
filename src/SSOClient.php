@@ -14,6 +14,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use TypeError;
 
 class SSOClient
 {
@@ -65,14 +66,14 @@ class SSOClient
      *
      * @var array
      */
-    protected $parameters = [];
+    protected array $parameters = [];
 
     /**
-     * The scopes being requested.
+     * The scopes what being requested.
      *
      * @var array
      */
-    protected $scopes = [];
+    protected array $scopes = [];
 
     /**
      * The custom Guzzle configuration options.
@@ -189,7 +190,7 @@ class SSOClient
      *
      * @return SSOUser
      *
-     * @throws InvalidUserResponseException
+     * @throws InvalidUserResponseException|InvalidTokenResponseException
      */
     public function ssoUser(): SSOUser
     {
@@ -207,6 +208,17 @@ class SSOClient
 
         $token = $this->getAccessTokenResponse($this->getCode());
 
+        return $this->getSSOUserByToken($token);
+    }
+
+    /**
+     * @param Token $token
+     *
+     * @return SSOUser
+     * @throws InvalidUserResponseException
+     */
+    public function getSSOUserByToken(Token $token): SSOUser
+    {
         $this->ssoUser = $this->mapUserToObject($this->getUserByToken($token));
 
         return $this->ssoUser->setToken($token);
@@ -345,7 +357,7 @@ class SSOClient
     /**
      * Get the raw user for the given access token.
      *
-     * @param string $token
+     * @param Token $token
      *
      * @return array
      * @throws InvalidUserResponseException
@@ -403,7 +415,7 @@ class SSOClient
                 $response->json('access_token'),
                 $response->json('refresh_token'),
             );
-        } catch (\TypeError $e) {
+        } catch (TypeError $e) {
             throw new InvalidTokenResponseException(message: 'Token response has not valid params', previous: $e);
         }
 
