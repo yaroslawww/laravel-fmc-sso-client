@@ -1,4 +1,7 @@
 # FMC SSO client for laravel framework.
+[![Build Status](https://scrutinizer-ci.com/g/yaroslawww/laravel-fmc-sso-client/badges/build.png?b=master)](https://scrutinizer-ci.com/g/yaroslawww/laravel-fmc-sso-client/build-status/master)
+[![Code Coverage](https://scrutinizer-ci.com/g/yaroslawww/laravel-fmc-sso-client/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yaroslawww/laravel-fmc-sso-client/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yaroslawww/laravel-fmc-sso-client/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yaroslawww/laravel-fmc-sso-client/?branch=master)
 
 [![](./assets/img/fmc_logo.jpg)](https://fmc.co.uk/)
 
