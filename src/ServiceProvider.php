@@ -23,7 +23,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             ]);
         }
 
-        $this->app->singleton(SSOClient::class, function ($app) {
+        $this->app->singleton(SSOClient::class, function () {
             return new SSOClient(
                 config('services.fmc-sso.client_id', config('fmc-sso-client.client_id')),
                 config('services.fmc-sso.client_secret', config('fmc-sso-client.client_secret')),

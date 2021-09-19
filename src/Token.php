@@ -86,7 +86,7 @@ class Token
             'tokenType'    => $this->tokenType,
             'refreshToken' => $this->refreshToken,
             'accessToken'  => $this->accessToken,
-            'expiresAt'    => $this->expiresAt->timestamp,
+            'expiresAt'    => $this->expiresAt->getTimestamp(),
         ];
     }
 

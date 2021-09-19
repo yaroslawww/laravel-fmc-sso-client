@@ -130,11 +130,9 @@ class SSOClient
     /**
      * Get the GET parameters for the code request.
      *
-     * @param string|null $state
-     *
      * @return array
      */
-    protected function getCodeFields(?string $state = null): array
+    protected function getCodeFields(): array
     {
         $fields = [
             'client_id'     => $this->clientId,
@@ -265,7 +263,7 @@ class SSOClient
         }
         $state = $this->stateManager->pullState();
 
-        return !(strlen($state) > 0 && request()->input('state') === $state);
+        return is_string($state) && !(strlen($state) > 0 && request()->input('state') === $state);
     }
 
     /**
