@@ -28,6 +28,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
                 config('services.fmc-sso.client_id', config('fmc-sso-client.client_id')),
                 config('services.fmc-sso.client_secret', config('fmc-sso-client.client_secret')),
                 config('services.fmc-sso.redirect_url', config('fmc-sso-client.redirect_url')),
+                config('services.fmc-sso.scopes', config('fmc-sso-client.scopes')),
                 config('services.fmc-sso.sso', config('fmc-sso-client.sso', [])),
                 config('services.fmc-sso.guzzle', config('fmc-sso-client.guzzle', [])),
             );

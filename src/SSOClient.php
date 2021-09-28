@@ -95,10 +95,11 @@ class SSOClient
      * @param string $clientId
      * @param string $clientSecret
      * @param string $redirectUrl
+     * @param array $scopes
      * @param array $ssoConfig
      * @param array $guzzle
      */
-    public function __construct(string $clientId, string $clientSecret, string $redirectUrl, array $ssoConfig = [], array $guzzle = [])
+    public function __construct(string $clientId, string $clientSecret, string $redirectUrl, array $scopes = [], array $ssoConfig = [], array $guzzle = [])
     {
         $this->stateManager  = new StateManager((bool) $ssoConfig['useState']);
         $this->routesManager = new RoutesManager(
@@ -113,6 +114,7 @@ class SSOClient
         $this->clientId     = $clientId;
         $this->redirectUrl  = $redirectUrl;
         $this->clientSecret = $clientSecret;
+        $this->scopes       = $scopes;
 
         $this->guzzle = $guzzle;
     }
