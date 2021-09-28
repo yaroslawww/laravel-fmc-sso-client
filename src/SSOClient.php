@@ -288,17 +288,20 @@ class SSOClient
      * Refresh token.
      *
      * @param Token $token
+     * @param array|null $scopes The requested scope must not include additional scopes that were not issued in
+     * the original access token. If omitted, the service should issue an access token with the same scope
+     * as was previously issued.
      *
      * @return Token|null
      * @throws InvalidTokenResponseException
      */
-    public function refreshToken(Token $token): ?Token
+    public function refreshToken(Token $token, ?array $scopes = null): ?Token
     {
         if (!$token->valid() || !$token->getRefreshToken()) {
             return null;
         }
         $response = $this->getHttpClient()
-                         ->post($this->routesManager->getTokenUrl(), $this->getRefreshTokenFields($token->getRefreshToken()));
+                         ->post($this->routesManager->getTokenUrl(), $this->getRefreshTokenFields($token->getRefreshToken(), $scopes));
 
         return $this->getTokenFromResponse($response);
     }
@@ -340,18 +343,24 @@ class SSOClient
      * Get the POST fields for the refresh token request.
      *
      * @param string $refreshToken
+     * @param array|null $scopes
      *
      * @return array
      */
-    protected function getRefreshTokenFields(string $refreshToken): array
+    protected function getRefreshTokenFields(string $refreshToken, ?array $scopes = null): array
     {
-        return [
+        $query = [
             'grant_type'    => 'refresh_token',
             'client_id'     => $this->clientId,
             'client_secret' => $this->clientSecret,
-            'scope'         => $this->routesManager->prepareScopes($this->getScopes()),
             'refresh_token' => $refreshToken,
         ];
+
+        if (!empty($scopes)) {
+            $query['scope'] = $this->routesManager->prepareScopes($scopes);
+        }
+
+        return $query;
     }
 
     /**
