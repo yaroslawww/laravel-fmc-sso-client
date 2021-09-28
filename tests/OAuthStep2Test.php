@@ -90,6 +90,39 @@ class OAuthStep2Test extends TestCase
     }
 
     /** @test */
+    public function user_response_should_have_correct_status()
+    {
+        $this->app['request']->merge([
+            'code' => 'my_code',
+        ]);
+
+        Http::fakeSequence()
+            ->push([
+                'token_type'    => 'SomeType',
+                'expires_in'    => 1000,
+                'access_token'  => 'example_access_token',
+                'refresh_token' => 'example_refresh_token',
+            ])
+            ->push(
+                [
+                'data' => [
+                    'id'          => 123,
+                    'title'       => 'Dev.',
+                    'first_name'  => 'Web',
+                    'last_name'   => 'Tester',
+                    'email'       => 'tester@web.home',
+                    'example_key' => 'example_val',
+                ],
+            ],
+                500
+            );
+
+        $this->expectException(InvalidUserResponseException::class);
+        $this->expectExceptionMessage('User response status error. Status: 500. Body: {"data":{"id":123,"title":"Dev.","first_name":"Web","last_name":"Tester","email":"tester@web.home","...');
+        SSOClient::ssoUser();
+    }
+
+    /** @test */
     public function user_response_should_be_successful()
     {
         $this->app['request']->merge([
@@ -164,7 +197,6 @@ class OAuthStep2Test extends TestCase
         $this->assertEquals($token2->getRefreshToken(), $token->getRefreshToken());
         $this->assertEquals($token2->getAuthorizationHeader(), $token->getAuthorizationHeader());
     }
-
 
 
     /** @test */

@@ -14,6 +14,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use TypeError;
 
 class SSOClient
@@ -377,10 +378,14 @@ class SSOClient
                          ->withHeaders([ 'Authorization' => $token->getAuthorizationHeader() ])
                          ->get($this->routesManager->getUserUrl());
 
+        if (!$response->successful()) {
+            throw new InvalidUserResponseException("User response status error. Status: {$response->status()}. Body: " . Str::limit(print_r($response->body(), true), 100));
+        }
+
         $user = $response->json('data');
 
         if (!is_array($user) || empty($user)) {
-            throw new InvalidUserResponseException('User response format not valid.');
+            throw new InvalidUserResponseException('User response format not valid: ' . Str::limit(print_r($response->body(), true), 100));
         }
 
 
