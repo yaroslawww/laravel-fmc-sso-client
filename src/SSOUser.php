@@ -96,7 +96,7 @@ class SSOUser
      */
     public function getTitle(): string
     {
-        return $this->title;
+        return (string) $this->title;
     }
 
     /**
@@ -106,7 +106,7 @@ class SSOUser
      */
     public function getFirstName(): string
     {
-        return $this->first_name;
+        return (string) $this->first_name;
     }
 
     /**
@@ -116,7 +116,7 @@ class SSOUser
      */
     public function getLastName(): string
     {
-        return $this->last_name;
+        return (string) $this->last_name;
     }
 
     /**
