@@ -30,23 +30,23 @@ class SSOUser
     /**
      * The user's title.
      *
-     * @var string
+     * @var string|null
      */
-    protected string $title;
+    protected ?string $title;
 
     /**
      * The user's first name.
      *
-     * @var string
+     * @var string|null
      */
-    protected string $first_name;
+    protected ?string $first_name;
 
     /**
      * The user's last name.
      *
-     * @var string
+     * @var string|null
      */
-    protected string $last_name;
+    protected ?string $last_name;
 
     /**
      * The user's raw attributes.
