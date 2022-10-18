@@ -11,7 +11,7 @@ class SSOUser
      *
      * @var Token
      */
-    protected Token $token;
+    protected ?Token $token = null;
 
     /**
      * The unique identifier for the user.
