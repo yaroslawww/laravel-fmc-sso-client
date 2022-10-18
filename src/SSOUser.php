@@ -72,9 +72,9 @@ class SSOUser
     /**
      * Access token instance.
      *
-     * @return Token
+     * @return Token|null
      */
-    public function token(): Token
+    public function token(): ?Token
     {
         return $this->token;
     }
